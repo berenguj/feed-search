@@ -25,10 +25,15 @@ const Dropdown = ({
       );
       setSelection([...selectionAfterRemoval]);
     }
+    //handleDropdown(selection);
+  };
+
+  const passSelection = () => {
+    handleDropdown(selection);
   };
 
   const isItemInSelection = (item) => {
-    handleDropdown(selection);
+    //handleDropdown(selection);
     if (selection.some((current) => current.id === item.id)) {
       return true;
     }
@@ -56,6 +61,7 @@ const Dropdown = ({
           {items.map((item) => (
             <li className="dd-list-item" key={item.id}>
               <button type="button" onClick={() => handleOnClick(item)}>
+                <>{passSelection()}</>
                 <span>{item.value}</span>
                 <span>{isItemInSelection(item) && "Selected"}</span>
               </button>
