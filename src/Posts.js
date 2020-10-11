@@ -3,7 +3,18 @@ import "./App.css";
 
 const Posts = ({ postData }) => {
   if (postData.length > 0) {
-    return <img src={postData[0].media_url} alt="description" />;
+    return (
+      <div>
+        {postData.map((post) => (
+          <img
+            key={post.id}
+            className="post"
+            src={post.media_url}
+            alt="description"
+          />
+        ))}
+      </div>
+    );
   } else {
     return <p>no posts :(</p>;
   }

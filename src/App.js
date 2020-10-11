@@ -10,21 +10,18 @@ function App() {
   const [showPeopleSearch, setPeopleSearch] = useState(false);
   const [showLocationSearch, setLocationSearch] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [test, setTests] = useState(0);
+  //const [filteredPosts, setFilteredPosts] = useState([]);
+  let filteredPosts = [];
   let postData = [];
 
   useEffect(() => {
     getIdUsername();
     getUserMedia();
-    testFunc2();
   }, []);
-  useEffect(() => {
-    testFunc2();
-  }, [test]);
 
   const getUserMedia = async () => {
     const response = await fetch(
-      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
+      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
     );
     postData = await response.json();
     console.log(postData);
@@ -38,14 +35,6 @@ function App() {
     );
     const data = await response.json();
     console.log(data);
-  };
-
-  const testFunc2 = () => {
-    console.log("test");
-  };
-
-  const testFunc = () => {
-    setTests(test + 1);
   };
 
   const dropdownOptions = [
@@ -119,6 +108,17 @@ function App() {
     return false;
   };
 
+  const filterByDate = () => {
+    let dateSearched = "2020-07";
+    posts.data.map((post) => {
+      if (post.timestamp.substring(0, 7) === dateSearched) {
+        console.log("timestamps same");
+        filteredPosts.push(post);
+      }
+    });
+    return true;
+  };
+
   return (
     <div className="App">
       <header className="header">
@@ -132,9 +132,12 @@ function App() {
           handleDropdown={handleDropdown}
         />
       </div>
-      <button onClick={testFunc}>test</button>
       <DateSearch showDateSearch={showDateSearch} />
-      <div>{postDataPresent() ? <Posts postData={posts.data} /> : null}</div>
+      <div>
+        {postDataPresent() && filterByDate() ? (
+          <Posts postData={filteredPosts} />
+        ) : null}
+      </div>
     </div>
   );
 }
