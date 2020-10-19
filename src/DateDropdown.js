@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.scss";
 
-const DateDropdown = ({ title, items = [], multiSelect = false }) => {
+const DateDropdown = ({
+  title,
+  items = [],
+  multiSelect = false,
+  handleDropdown,
+}) => {
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState([]);
+  const didMount = useRef(false);
   const toggle = () => setOpen(!open);
+
+  useEffect(() => {
+    if (didMount.current) {
+      passSelection();
+    } else {
+      didMount.current = true;
+    }
+  }, [selection]);
 
   const handleOnClick = (item) => {
     if (!selection.some((current) => current.id === item.id)) {
@@ -27,6 +41,10 @@ const DateDropdown = ({ title, items = [], multiSelect = false }) => {
       return true;
     }
     return false;
+  };
+
+  const passSelection = () => {
+    handleDropdown(selection);
   };
 
   return (

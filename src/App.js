@@ -24,9 +24,7 @@ function App() {
       "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
     );
     postData = await response.json();
-    console.log(postData);
     setPosts(postData);
-    console.log(postData.data.length);
   };
 
   const getIdUsername = async () => {
@@ -34,7 +32,6 @@ function App() {
       "https://graph.instagram.com/me/?fields=id,username&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
     );
     const data = await response.json();
-    console.log(data);
   };
 
   const dropdownOptions = [
@@ -59,7 +56,6 @@ function App() {
 
   const showSelection = () => {
     //currently just support 1 selection, will implement multiple selections later
-    console.log(selection.length);
     let valueArr = [];
     for (let i = 0; i < selection.length; i++) {
       switch (selection[i].value) {
@@ -102,7 +98,6 @@ function App() {
   const postDataPresent = () => {
     console.log(posts);
     if (posts.data != null) {
-      console.log("in if");
       return true;
     }
     return false;
@@ -112,7 +107,6 @@ function App() {
     let dateSearched = "2020-07";
     posts.data.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
-        console.log("timestamps same");
         filteredPosts.push(post);
       }
     });
@@ -132,12 +126,7 @@ function App() {
           handleDropdown={handleDropdown}
         />
       </div>
-      <DateSearch showDateSearch={showDateSearch} />
-      <div>
-        {postDataPresent() && filterByDate() ? (
-          <Posts postData={filteredPosts} />
-        ) : null}
-      </div>
+      <DateSearch showDateSearch={showDateSearch} posts={posts.data} />
     </div>
   );
 }

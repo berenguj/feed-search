@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import DateDropdown from "./DateDropdown";
 import "./App.css";
+import Posts from "./Posts";
 
-const DateSearch = ({ showDateSearch }) => {
+const DateSearch = ({ showDateSearch, posts }) => {
+  let dateSelected = [];
+  let filteredPosts = [];
+
   const months = [
     {
       id: 1,
@@ -54,133 +58,6 @@ const DateSearch = ({ showDateSearch }) => {
     },
   ];
 
-  const days = [
-    {
-      id: 1,
-      value: "1",
-    },
-    {
-      id: 2,
-      value: "2",
-    },
-    {
-      id: 3,
-      value: "3",
-    },
-    {
-      id: 4,
-      value: "4",
-    },
-    {
-      id: 5,
-      value: "5",
-    },
-    {
-      id: 6,
-      value: "6",
-    },
-    {
-      id: 7,
-      value: "7",
-    },
-    {
-      id: 8,
-      value: "8",
-    },
-    {
-      id: 9,
-      value: "9",
-    },
-    {
-      id: 10,
-      value: "10",
-    },
-    {
-      id: 11,
-      value: "11",
-    },
-    {
-      id: 12,
-      value: "12",
-    },
-    {
-      id: 13,
-      value: "13",
-    },
-    {
-      id: 14,
-      value: "14",
-    },
-    {
-      id: 15,
-      value: "15",
-    },
-    {
-      id: 16,
-      value: "16",
-    },
-    {
-      id: 17,
-      value: "17",
-    },
-    {
-      id: 18,
-      value: "18",
-    },
-    {
-      id: 19,
-      value: "19",
-    },
-    {
-      id: 20,
-      value: "20",
-    },
-    {
-      id: 21,
-      value: "21",
-    },
-    {
-      id: 22,
-      value: "22",
-    },
-    {
-      id: 23,
-      value: "23",
-    },
-    {
-      id: 24,
-      value: "24",
-    },
-    {
-      id: 25,
-      value: "25",
-    },
-    {
-      id: 26,
-      value: "26",
-    },
-    {
-      id: 27,
-      value: "27",
-    },
-    {
-      id: 28,
-      value: "28",
-    },
-    {
-      id: 29,
-      value: "29",
-    },
-    {
-      id: 30,
-      value: "30",
-    },
-    {
-      id: 31,
-      value: "31",
-    },
-  ];
-
   const years = [
     {
       id: 1,
@@ -228,13 +105,54 @@ const DateSearch = ({ showDateSearch }) => {
     },
   ];
 
+  const handleDropdown = (selec) => {
+    console.log("in handle dropdown");
+    dateSelected.push(selec);
+    console.log(dateSelected);
+  };
+
+  const postDataPresent = () => {
+    if (posts != null) {
+      return true;
+    }
+    console.log("hello");
+    return false;
+  };
+
+  const filterByDate = () => {
+    let dateSearched = "2020-07";
+    posts.map((post) => {
+      if (post.timestamp.substring(0, 7) === dateSearched) {
+        filteredPosts.push(post);
+      }
+    });
+    return true;
+  };
+
   return (
     <>
       {showDateSearch && (
-        <div className="center">
-          <DateDropdown title="Month" items={months} />
-          <DateDropdown title="Day" items={days} />
-          <DateDropdown title="Year" items={years} />
+        <div>
+          <div className="center">
+            <DateDropdown
+              title="Month"
+              items={months}
+              handleDropdown={handleDropdown}
+            />
+            <DateDropdown
+              title="Year"
+              items={years}
+              handleDropdown={handleDropdown}
+            />
+          </div>
+          <div className="center">
+            <button className="btn">Search</button>
+          </div>
+          <div>
+            {postDataPresent() && filterByDate() ? (
+              <Posts postData={filteredPosts} />
+            ) : null}
+          </div>
         </div>
       )}
     </>
