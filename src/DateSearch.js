@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DateDropdown from "./DateDropdown";
 import "./App.css";
 import Posts from "./Posts";
 
 const DateSearch = ({ showDateSearch, posts }) => {
-  let dateSelected = [];
+  //let monthSelected = {};
+  const [monthSelected, setMonthSelected] = useState({});
+  //let yearSelected = {};
+  const [yearSelected, setYearSelected] = useState({});
+  let monthYearCombo = "";
   let filteredPosts = [];
+  const [monthSelectedBool, setMonthSelectedBool] = useState(false);
+  const [yearSelectedBool, setYearSelectedBool] = useState(false);
 
   const months = [
     {
@@ -105,10 +111,63 @@ const DateSearch = ({ showDateSearch, posts }) => {
     },
   ];
 
-  const handleDropdown = (selec) => {
-    console.log("in handle dropdown");
-    dateSelected.push(selec);
-    console.log(dateSelected);
+  const handleMonthDropdown = (selec) => {
+    //monthSelected = selec;
+    setMonthSelected(selec);
+    setMonthSelectedBool(true);
+    console.log(monthSelected);
+  };
+
+  const handleYearDropdown = (selec) => {
+    setYearSelected(selec);
+    //yearSelected = selec;
+    setYearSelectedBool(true);
+    console.log(yearSelected);
+  };
+
+  const getMonthYearCombo = () => {
+    console.log(monthSelected);
+    monthYearCombo = yearSelected.value + "-";
+    console.log(monthYearCombo);
+    switch (monthSelected.value) {
+      case "Jan":
+        monthYearCombo += "01";
+        break;
+      case "Feb":
+        monthYearCombo += "02";
+        break;
+      case "Mar":
+        monthYearCombo += "03";
+        break;
+      case "Apr":
+        monthYearCombo += "04";
+        break;
+      case "May":
+        monthYearCombo += "05";
+        break;
+      case "Jun":
+        monthYearCombo += "06";
+        break;
+      case "Jul":
+        monthYearCombo += "07";
+        break;
+      case "Aug":
+        monthYearCombo += "08";
+        break;
+      case "Sep":
+        monthYearCombo += "09";
+        break;
+      case "Oct":
+        monthYearCombo += "10";
+        break;
+      case "Nov":
+        monthYearCombo += "11";
+        break;
+      case "Dec":
+        monthYearCombo += "12";
+        break;
+    }
+    console.log(monthYearCombo);
   };
 
   const postDataPresent = () => {
@@ -119,8 +178,18 @@ const DateSearch = ({ showDateSearch, posts }) => {
     return false;
   };
 
+  const dateSelected = () => {
+    if (!yearSelectedBool || !monthSelectedBool) {
+      console.log("return false");
+      return false;
+    }
+    console.log("return true");
+    return true;
+  };
+
   const filterByDate = () => {
-    let dateSearched = "2020-07";
+    getMonthYearCombo();
+    let dateSearched = monthYearCombo;
     posts.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
         filteredPosts.push(post);
@@ -137,19 +206,19 @@ const DateSearch = ({ showDateSearch, posts }) => {
             <DateDropdown
               title="Month"
               items={months}
-              handleDropdown={handleDropdown}
+              handleDropdown={handleMonthDropdown}
             />
             <DateDropdown
               title="Year"
               items={years}
-              handleDropdown={handleDropdown}
+              handleDropdown={handleYearDropdown}
             />
           </div>
           <div className="center">
             <button className="btn">Search</button>
           </div>
           <div>
-            {postDataPresent() && filterByDate() ? (
+            {postDataPresent() && dateSelected() && filterByDate() ? (
               <Posts postData={filteredPosts} />
             ) : null}
           </div>

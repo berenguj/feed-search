@@ -44,7 +44,7 @@ const DateDropdown = ({
   };
 
   const passSelection = () => {
-    handleDropdown(selection);
+    handleDropdown(selection[0]);
   };
 
   return (
