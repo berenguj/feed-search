@@ -16,9 +16,10 @@ function App() {
   const [monthYearCombo, setMonthYearCombo] = useState("");
   const [dateSelectedBool, setDateSelectedBool] = useState(false);
   const [allPosts, setAllPosts] = useState([]);
-  //const [filteredPosts, setFilteredPosts] = useState([]);
-  let filteredPosts = [];
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [doneFiltering, setDoneFiltering] = useState(false);
   let postData = [];
+  //let filteredPosts = [];
   //let monthYearCombo = "";
 
   useEffect(() => {
@@ -270,12 +271,18 @@ function App() {
     console.log("filtering by date");
     let dateSearched = monthYearCombo;
     console.log("datesearched: " + dateSearched);
+    let tempFilteredPosts = [];
     allPosts.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
-        filteredPosts.push(post);
+        //console.log(post);
+        //setFilteredPosts([...filteredPosts, post]);
+        tempFilteredPosts.push(post);
       }
     });
     console.log(filteredPosts);
+    setFilteredPosts(tempFilteredPosts);
+    setDoneFiltering(true);
+    console.log("done filtering");
     return true;
   };
 
@@ -305,6 +312,7 @@ function App() {
             />
           </div>
         )}
+        {doneFiltering && <Posts postData={filteredPosts} />}
       </div>
     </div>
   );

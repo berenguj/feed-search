@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 
 const Posts = ({ postData }) => {
+  console.log("posts: " + postData);
   if (postData.length > 0) {
     return (
       <div>
