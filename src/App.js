@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Dropdown from "./Dropdown";
-import DateSearch from "./DateSearch";
+import DateDropdown from "./DateDropdown";
 import Posts from "./Posts";
 
 function App() {
@@ -9,29 +9,34 @@ function App() {
   const [showDateSearch, setDateSearch] = useState(false);
   const [showPeopleSearch, setPeopleSearch] = useState(false);
   const [showLocationSearch, setLocationSearch] = useState(false);
-  const [posts, setPosts] = useState([]);
+  const [monthSelected, setMonthSelected] = useState({});
+  const [yearSelected, setYearSelected] = useState({});
+  const [monthSelectedBool, setMonthSelectedBool] = useState(false);
+  const [yearSelectedBool, setYearSelectedBool] = useState(false);
+  const [dateSelectedBool, setDateSelectedBool] = useState(false);
   //const [filteredPosts, setFilteredPosts] = useState([]);
   let filteredPosts = [];
   let postData = [];
+  let monthYearCombo = "";
 
   useEffect(() => {
     getIdUsername();
-    getUserMedia();
   }, []);
 
-  const getUserMedia = async () => {
-    const response = await fetch(
-      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
-    );
-    postData = await response.json();
-    setPosts(postData);
-  };
+  useEffect(() => {
+    console.log(monthSelectedBool);
+    console.log(yearSelectedBool);
+    if (monthSelectedBool && yearSelectedBool) {
+      getMonthYearCombo();
+    }
+  }, [monthSelected, yearSelected]);
 
   const getIdUsername = async () => {
     const response = await fetch(
-      "https://graph.instagram.com/me/?fields=id,username&access_token=IGQVJVQ2d1YU9ISVk0T2h3TkVEUmpraEctTS1wZAWxvM3Q3aVIzT19NaUwwRWFhUV9lUnU0bmJIREdPeFNIX0lERm9fNFE4bnRLVHgxQ1A5SUx1bVlGUzZALdlB2SHhKOVIyY0hIellR"
+      "https://graph.instagram.com/me/?fields=id,username&access_token=IGQVJVQWx6X0tkM1BncGR1WXh6TDVCbzY2SWpFVGp4dXdUMWotWmEwalJvc29VNV9MQ1AwbmQzdGQzbGszYVZANSUpPQ3lTX0ZAIblBsT3ZAvX01ucjJQOVFFb3dqWXF4aFplbmFCdzVodkx2SEttbm44TAZDZD"
     );
     const data = await response.json();
+    console.log(data);
   };
 
   const dropdownOptions = [
@@ -52,6 +57,163 @@ function App() {
   const handleDropdown = (selec) => {
     setSelection(selec);
     showSelection();
+  };
+
+  const handleMonthDropdown = (selec) => {
+    console.log(selec);
+    setMonthSelected(selec);
+    setMonthSelectedBool(true);
+  };
+
+  const handleYearDropdown = (selec) => {
+    console.log(selec);
+    setYearSelected(selec);
+    setYearSelectedBool(true);
+  };
+
+  const months = [
+    {
+      id: 1,
+      value: "Jan",
+    },
+    {
+      id: 2,
+      value: "Feb",
+    },
+    {
+      id: 3,
+      value: "Mar",
+    },
+    {
+      id: 4,
+      value: "Apr",
+    },
+    {
+      id: 5,
+      value: "May",
+    },
+    {
+      id: 6,
+      value: "Jun",
+    },
+    {
+      id: 7,
+      value: "Jul",
+    },
+    {
+      id: 8,
+      value: "Aug",
+    },
+    {
+      id: 9,
+      value: "Sep",
+    },
+    {
+      id: 10,
+      value: "Oct",
+    },
+    {
+      id: 11,
+      value: "Nov",
+    },
+    {
+      id: 12,
+      value: "Dec",
+    },
+  ];
+
+  const years = [
+    {
+      id: 1,
+      value: "2010",
+    },
+    {
+      id: 2,
+      value: "2011",
+    },
+    {
+      id: 3,
+      value: "2012",
+    },
+    {
+      id: 4,
+      value: "2013",
+    },
+    {
+      id: 5,
+      value: "2014",
+    },
+    {
+      id: 6,
+      value: "2015",
+    },
+    {
+      id: 7,
+      value: "2016",
+    },
+    {
+      id: 8,
+      value: "2017",
+    },
+    {
+      id: 9,
+      value: "2018",
+    },
+    {
+      id: 10,
+      value: "2019",
+    },
+    {
+      id: 11,
+      value: "2020",
+    },
+    {
+      id: 12,
+      value: "2021",
+    },
+  ];
+
+  const getMonthYearCombo = () => {
+    monthYearCombo = yearSelected.value + "-";
+    switch (monthSelected.value) {
+      case "Jan":
+        monthYearCombo += "01";
+        break;
+      case "Feb":
+        monthYearCombo += "02";
+        break;
+      case "Mar":
+        monthYearCombo += "03";
+        break;
+      case "Apr":
+        monthYearCombo += "04";
+        break;
+      case "May":
+        monthYearCombo += "05";
+        break;
+      case "Jun":
+        monthYearCombo += "06";
+        break;
+      case "Jul":
+        monthYearCombo += "07";
+        break;
+      case "Aug":
+        monthYearCombo += "08";
+        break;
+      case "Sep":
+        monthYearCombo += "09";
+        break;
+      case "Oct":
+        monthYearCombo += "10";
+        break;
+      case "Nov":
+        monthYearCombo += "11";
+        break;
+      case "Dec":
+        monthYearCombo += "12";
+        break;
+    }
+    console.log(monthYearCombo);
   };
 
   const showSelection = () => {
@@ -88,24 +250,12 @@ function App() {
     }
   };
 
-  const isIMAGE = (post) => {
-    if ("IMAGE" == post.media_type) {
-      return true;
-    }
-    return false;
-  };
-
-  const postDataPresent = () => {
-    console.log(posts);
-    if (posts.data != null) {
-      return true;
-    }
-    return false;
-  };
-
   const filterByDate = () => {
-    let dateSearched = "2020-07";
-    posts.data.map((post) => {
+    getMonthYearCombo();
+    let dateSearched = monthYearCombo;
+    console.log("datesearched: " + dateSearched);
+    //while(postData.length == 0){ console.log("waiting for data"); }
+    postData.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
         filteredPosts.push(post);
       }
@@ -122,11 +272,24 @@ function App() {
         <Dropdown
           title="Search by"
           items={dropdownOptions}
-          multiSelect={true}
+          multiSelect={false}
           handleDropdown={handleDropdown}
         />
+        {showDateSearch && (
+          <div className="center">
+            <DateDropdown
+              title="Month"
+              items={months}
+              handleDropdown={handleMonthDropdown}
+            />
+            <DateDropdown
+              title="Year"
+              items={years}
+              handleDropdown={handleYearDropdown}
+            />
+          </div>
+        )}
       </div>
-      <DateSearch showDateSearch={showDateSearch} posts={posts.data} />
     </div>
   );
 }

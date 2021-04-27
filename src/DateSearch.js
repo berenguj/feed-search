@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from "react";
 import DateDropdown from "./DateDropdown";
+import useDidMountEffect from './useDidMountEffect';
 import "./App.css";
 import Posts from "./Posts";
 
-const DateSearch = ({ showDateSearch, posts }) => {
+const DateSearch = ({ showDateSearch }) => {
   //let monthSelected = {};
   const [monthSelected, setMonthSelected] = useState({});
   //let yearSelected = {};
   const [yearSelected, setYearSelected] = useState({});
+  const [posts, setPosts] = useState([]);
   let monthYearCombo = "";
   let filteredPosts = [];
   const [monthSelectedBool, setMonthSelectedBool] = useState(false);
   const [yearSelectedBool, setYearSelectedBool] = useState(false);
+  const [dateSelectedBool, setDateSelectedBool] = useState(false);
+  const [rerenderPrecaution, setRerenderPrecation] = useState(false);
+  let postData = [];
+
+  /*useEffect(() => {
+    getUserMedia();
+  }, [dateSelectedBool]);*/
+
+  useDidMountEffect(() => { /*doesn't run on initial render*/
+    //getUserMedia();
+  }, [dateSelectedBool])
 
   const months = [
     {
@@ -109,7 +122,23 @@ const DateSearch = ({ showDateSearch, posts }) => {
       id: 10,
       value: "2020",
     },
+    {
+      id: 11,
+      value: "2021",
+    }
   ];
+
+  const getUserMedia = async () => {
+    const response = await fetch(
+      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJVNGtnY3NJNW5hREY0alREVUNZAZA3JGNWxtZAHZAub3lzY1AzZAmszM1FVdWF2MlRreTJzQ3draGVabG92Mk56UXdFZAllqam5VclEzSk9oZAGxNbnRGX3l0LWxvN0NSelhJY3M5UVZA1UmVuYVJNYUpkRAZDZD&limit=100"
+    );
+    postData = await response.json();
+    console.log("about to set date bool");
+    setDateSelectedBool(true);
+    console.log("getusermedia executed");
+    setPosts(postData);
+    setRerenderPrecation(true);
+  };
 
   const handleMonthDropdown = (selec) => {
     //monthSelected = selec;
@@ -170,27 +199,31 @@ const DateSearch = ({ showDateSearch, posts }) => {
     console.log(monthYearCombo);
   };
 
-  const postDataPresent = () => {
-    if (posts != null) {
-      return true;
-    }
-    console.log("hello");
-    return false;
-  };
-
   const dateSelected = () => {
+    /*if(rerenderPrecaution){
+      return false;
+    }*/
     if (!yearSelectedBool || !monthSelectedBool) {
       console.log("return false");
       return false;
     }
-    console.log("return true");
-    return true;
+    else if(dateSelectedBool == true){
+      return true;
+    }
+    else{
+      getUserMedia();
+      //setDateSelectedBool(true);
+      console.log("return true");
+      return true;
+    }
   };
 
   const filterByDate = () => {
     getMonthYearCombo();
     let dateSearched = monthYearCombo;
-    posts.map((post) => {
+    console.log("datesearched: " + dateSearched);
+    //while(postData.length == 0){ console.log("waiting for data"); }
+    postData.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
         filteredPosts.push(post);
       }
@@ -218,7 +251,7 @@ const DateSearch = ({ showDateSearch, posts }) => {
             <button className="btn">Search</button>
           </div>
           <div>
-            {postDataPresent() && dateSelected() && filterByDate() ? (
+            {dateSelected() && filterByDate() && rerenderPrecaution ? (
               <Posts postData={filteredPosts} />
             ) : null}
           </div>
