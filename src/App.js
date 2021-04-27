@@ -13,23 +13,39 @@ function App() {
   const [yearSelected, setYearSelected] = useState({});
   const [monthSelectedBool, setMonthSelectedBool] = useState(false);
   const [yearSelectedBool, setYearSelectedBool] = useState(false);
+  const [monthYearCombo, setMonthYearCombo] = useState("");
   const [dateSelectedBool, setDateSelectedBool] = useState(false);
+  const [allPosts, setAllPosts] = useState([]);
   //const [filteredPosts, setFilteredPosts] = useState([]);
   let filteredPosts = [];
   let postData = [];
-  let monthYearCombo = "";
+  //let monthYearCombo = "";
 
   useEffect(() => {
-    getIdUsername();
+    getUserMedia();
   }, []);
 
+  const getUserMedia = async () => {
+    const response = await fetch(
+      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
+    );
+    postData = await response.json();
+    console.log(postData.data);
+    setAllPosts(postData.data);
+  };
+
   useEffect(() => {
-    console.log(monthSelectedBool);
-    console.log(yearSelectedBool);
     if (monthSelectedBool && yearSelectedBool) {
       getMonthYearCombo();
     }
   }, [monthSelected, yearSelected]);
+
+  useEffect(() => {
+    console.log(monthYearCombo);
+    if (monthYearCombo != "") {
+      filterByDate();
+    }
+  }, [monthYearCombo]);
 
   const getIdUsername = async () => {
     const response = await fetch(
@@ -174,46 +190,46 @@ function App() {
   ];
 
   const getMonthYearCombo = () => {
-    monthYearCombo = yearSelected.value + "-";
+    let monthYearComboTemp = yearSelected.value + "-";
     switch (monthSelected.value) {
       case "Jan":
-        monthYearCombo += "01";
+        monthYearComboTemp += "01";
         break;
       case "Feb":
-        monthYearCombo += "02";
+        monthYearComboTemp += "02";
         break;
       case "Mar":
-        monthYearCombo += "03";
+        monthYearComboTemp += "03";
         break;
       case "Apr":
-        monthYearCombo += "04";
+        monthYearComboTemp += "04";
         break;
       case "May":
-        monthYearCombo += "05";
+        monthYearComboTemp += "05";
         break;
       case "Jun":
-        monthYearCombo += "06";
+        monthYearComboTemp += "06";
         break;
       case "Jul":
-        monthYearCombo += "07";
+        monthYearComboTemp += "07";
         break;
       case "Aug":
-        monthYearCombo += "08";
+        monthYearComboTemp += "08";
         break;
       case "Sep":
-        monthYearCombo += "09";
+        monthYearComboTemp += "09";
         break;
       case "Oct":
-        monthYearCombo += "10";
+        monthYearComboTemp += "10";
         break;
       case "Nov":
-        monthYearCombo += "11";
+        monthYearComboTemp += "11";
         break;
       case "Dec":
-        monthYearCombo += "12";
+        monthYearComboTemp += "12";
         break;
     }
-    console.log(monthYearCombo);
+    setMonthYearCombo(monthYearComboTemp);
   };
 
   const showSelection = () => {
@@ -250,16 +266,16 @@ function App() {
     }
   };
 
-  const filterByDate = () => {
-    getMonthYearCombo();
+  const filterByDate = async () => {
+    console.log("filtering by date");
     let dateSearched = monthYearCombo;
     console.log("datesearched: " + dateSearched);
-    //while(postData.length == 0){ console.log("waiting for data"); }
-    postData.map((post) => {
+    allPosts.map((post) => {
       if (post.timestamp.substring(0, 7) === dateSearched) {
         filteredPosts.push(post);
       }
     });
+    console.log(filteredPosts);
     return true;
   };
 
