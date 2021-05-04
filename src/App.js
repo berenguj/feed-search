@@ -16,9 +16,11 @@ function App() {
   const [monthYearCombo, setMonthYearCombo] = useState("");
   const [dateSelectedBool, setDateSelectedBool] = useState(false);
   const [allPosts, setAllPosts] = useState([]);
+  const [nextURL, setNextURL] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [doneFiltering, setDoneFiltering] = useState(false);
   let postData = [];
+  let count = 0;
   //let filteredPosts = [];
   //let monthYearCombo = "";
 
@@ -27,12 +29,19 @@ function App() {
   }, []);
 
   const getUserMedia = async () => {
-    const response = await fetch(
-      "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
-    );
-    postData = await response.json();
-    console.log(postData.data);
+    if (nextURL == "") {
+      //initial page
+      const response = await fetch(
+        "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
+      );
+      postData = await response.json();
+    } else {
+      //next page
+      const response = await fetch(nextURL);
+      postData = await response.json();
+    }
     setAllPosts(postData.data);
+    setNextURL(postData.paging.next);
   };
 
   useEffect(() => {
@@ -42,7 +51,7 @@ function App() {
   }, [monthSelected, yearSelected]);
 
   useEffect(() => {
-    console.log(monthYearCombo);
+    //console.log(monthYearCombo);
     if (monthYearCombo != "") {
       filterByDate();
     }
@@ -53,7 +62,7 @@ function App() {
       "https://graph.instagram.com/me/?fields=id,username&access_token=IGQVJVQWx6X0tkM1BncGR1WXh6TDVCbzY2SWpFVGp4dXdUMWotWmEwalJvc29VNV9MQ1AwbmQzdGQzbGszYVZANSUpPQ3lTX0ZAIblBsT3ZAvX01ucjJQOVFFb3dqWXF4aFplbmFCdzVodkx2SEttbm44TAZDZD"
     );
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
   };
 
   const dropdownOptions = [
@@ -279,7 +288,15 @@ function App() {
         tempFilteredPosts.push(post);
       }
     });
-    console.log(filteredPosts);
+    if (tempFilteredPosts.length == 0) {
+      getUserMedia();
+      //filterByDate();
+    }
+    /* if (count == 0) {
+      filterByDate();
+      count++;
+    } */
+    console.log("filtered posts: " + filteredPosts);
     setFilteredPosts(tempFilteredPosts);
     setDoneFiltering(true);
     console.log("done filtering");
