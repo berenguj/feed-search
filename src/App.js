@@ -16,32 +16,52 @@ function App() {
   const [monthYearCombo, setMonthYearCombo] = useState("");
   const [dateSelectedBool, setDateSelectedBool] = useState(false);
   const [allPosts, setAllPosts] = useState([]);
+  const [prevPosts, setPrevPosts] = useState([]);
   const [nextURL, setNextURL] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [doneFiltering, setDoneFiltering] = useState(false);
+  const [initMediaIsSet, setInitMediaIsSet] = useState(false);
   let postData = [];
-  let count = 0;
   //let filteredPosts = [];
   //let monthYearCombo = "";
 
   useEffect(() => {
-    getUserMedia();
+    initUserMedia();
   }, []);
 
-  const getUserMedia = async () => {
+  const initUserMedia = async () => {
     if (nextURL == "") {
       //initial page
+      console.log("pinging initial page");
       const response = await fetch(
         "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
       );
       postData = await response.json();
-    } else {
-      //next page
-      const response = await fetch(nextURL);
-      postData = await response.json();
+      /* setAllPosts(postData.data);
+      setNextURL(postData.paging.next); */
+      console.log("postData.data[1]: " + postData.data[1].caption);
+      setAllPosts(postData.data);
+      setNextURL(postData.paging.next);
+      setInitMediaIsSet(true);
     }
-    setAllPosts(postData.data);
+  };
+
+  const getUserMedia = async () => {
+    //next page
+    console.log("pinging next page with next url " + nextURL);
+    const response = await fetch(nextURL);
+    postData = await response.json();
+    //console.log("postData.data[1]: " + postData.data[1].caption);
+    //return postData;
+
+    /* if (allPosts.length != 0) {
+      setPrevPosts(allPosts);
+    } */
+    console.log("postData.data[1]: " + postData.data[1].caption);
     setNextURL(postData.paging.next);
+    setAllPosts(postData.data);
+    //return allPosts;
+    return postData;
   };
 
   useEffect(() => {
@@ -56,6 +76,12 @@ function App() {
       filterByDate();
     }
   }, [monthYearCombo]);
+
+  useEffect(() => {
+    if (initMediaIsSet) {
+      filterByDate();
+    }
+  }, [allPosts]);
 
   const getIdUsername = async () => {
     const response = await fetch(
@@ -280,27 +306,26 @@ function App() {
     console.log("filtering by date");
     let dateSearched = monthYearCombo;
     console.log("datesearched: " + dateSearched);
+
     let tempFilteredPosts = [];
-    allPosts.map((post) => {
-      if (post.timestamp.substring(0, 7) === dateSearched) {
-        //console.log(post);
-        //setFilteredPosts([...filteredPosts, post]);
-        tempFilteredPosts.push(post);
-      }
-    });
+
+    if (allPosts.length != 0) {
+      allPosts.map((post) => {
+        if (post.timestamp.substring(0, 7) === dateSearched) {
+          //console.log(post);
+          //setFilteredPosts([...filteredPosts, post]);
+          tempFilteredPosts.push(post);
+        }
+      });
+    }
     if (tempFilteredPosts.length == 0) {
       getUserMedia();
-      //filterByDate();
+    } else {
+      console.log("filtered posts: " + tempFilteredPosts);
+      setFilteredPosts(tempFilteredPosts);
+      setDoneFiltering(true);
+      console.log("done filtering");
     }
-    /* if (count == 0) {
-      filterByDate();
-      count++;
-    } */
-    console.log("filtered posts: " + filteredPosts);
-    setFilteredPosts(tempFilteredPosts);
-    setDoneFiltering(true);
-    console.log("done filtering");
-    return true;
   };
 
   return (
