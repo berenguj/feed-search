@@ -40,9 +40,11 @@ function App() {
       /* setAllPosts(postData.data);
       setNextURL(postData.paging.next); */
       console.log("postData.data[1]: " + postData.data[1].caption);
-      setAllPosts(postData.data);
       setNextURL(postData.paging.next);
       setInitMediaIsSet(true);
+      setAllPosts(postData.data);
+      //setNextURL(postData.paging.next);
+      //setInitMediaIsSet(true);
     }
   };
 
@@ -73,12 +75,16 @@ function App() {
   useEffect(() => {
     //console.log(monthYearCombo);
     if (monthYearCombo != "") {
-      filterByDate();
+      if (allPosts.length == 0) {
+        initUserMedia();
+      } else {
+        filterByDate();
+      }
     }
   }, [monthYearCombo]);
 
   useEffect(() => {
-    if (initMediaIsSet) {
+    if (initMediaIsSet && monthYearCombo != "") {
       filterByDate();
     }
   }, [allPosts]);
@@ -319,10 +325,10 @@ function App() {
           tempFilteredPosts.push(post);
         }
       });
-    } else if (allPosts.length == 0) {
+    } /* else if (allPosts.length == 0) {
       initUserMedia();
       return;
-    }
+    } */
     if (tempFilteredPosts.length == 0) {
       getUserMedia();
     } else {
