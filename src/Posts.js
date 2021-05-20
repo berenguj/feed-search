@@ -6,12 +6,14 @@ const Posts = ({ postData }) => {
     return (
       <div>
         {postData.map((post) => (
-          <img
-            key={post.id}
-            className="post"
-            src={post.media_url}
-            alt="description"
-          />
+          <a href={post.permalink}>
+            <img
+              key={post.id}
+              className="post"
+              src={post.media_url}
+              alt="description"
+            />
+          </a>
         ))}
       </div>
     );

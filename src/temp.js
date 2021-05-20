@@ -34,7 +34,7 @@ function App() {
       //initial page
       console.log("pinging initial page");
       const response = await fetch(
-        "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
+        "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
       );
       postData = await response.json();
       /* setAllPosts(postData.data);
@@ -321,16 +321,10 @@ function App() {
     if (tempFilteredPosts.length == 0) {
       getUserMedia();
     } else {
-      /*check if there are other matching posts on the next page*/
-      let lastPost = allPosts[allPosts.length - 1];
-      if (lastPost.timestamp.substring(0, 7) === dateSearched) {
-        getUserMedia();
-      } else {
-        /*done filtering*/
-        setFilteredPosts(tempFilteredPosts);
-        setDoneFiltering(true);
-        console.log("done filtering");
-      }
+      console.log("filtered posts: " + tempFilteredPosts);
+      setFilteredPosts(tempFilteredPosts);
+      setDoneFiltering(true);
+      console.log("done filtering");
     }
   };
 
