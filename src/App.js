@@ -303,6 +303,8 @@ function App() {
   };
 
   const filterByDate = async () => {
+    setDoneFiltering(false);
+    setFilteredPosts([]);
     console.log("filtering by date");
     let dateSearched = monthYearCombo;
     console.log("datesearched: " + dateSearched);
@@ -317,6 +319,9 @@ function App() {
           tempFilteredPosts.push(post);
         }
       });
+    } else if (allPosts.length == 0) {
+      initUserMedia();
+      return;
     }
     if (tempFilteredPosts.length == 0) {
       getUserMedia();
@@ -330,6 +335,16 @@ function App() {
         setFilteredPosts(tempFilteredPosts);
         setDoneFiltering(true);
         console.log("done filtering");
+
+        /*reset search*/
+        setMonthSelected("");
+        setMonthSelectedBool(false);
+        setYearSelected("");
+        setYearSelectedBool(false);
+        setMonthYearCombo("");
+        setNextURL("");
+        setInitMediaIsSet(false);
+        setAllPosts([]);
       }
     }
   };
