@@ -22,13 +22,13 @@ function App() {
   const [doneFiltering, setDoneFiltering] = useState(false);
   const [initMediaIsSet, setInitMediaIsSet] = useState(false);
   let postData = [];
-  //let filteredPosts = [];
-  //let monthYearCombo = "";
 
+  /*get the user's (@jayyduhhhhh's) media when the app is first launched*/
   useEffect(() => {
     initUserMedia();
   }, []);
 
+  /*get the first page of posts*/
   const initUserMedia = async () => {
     if (nextURL == "") {
       //initial page
@@ -37,43 +37,32 @@ function App() {
         "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=IGQVJWMXhpS3kwZAGJDMVJJc0FwNWxFQWNVU3hzWGY4akxZAeUEwT01PYUhacThLSVZAXbG9KUEJKZA1BaUS15MEVzaXRIamNiT05OejIzS2kyVExJYkJia3JxZATdBenhiMHB4NkhoUXE2dDBXeUdXckYwWAZDZD&limit=100"
       );
       postData = await response.json();
-      /* setAllPosts(postData.data);
-      setNextURL(postData.paging.next); */
-      console.log("postData.data[1]: " + postData.data[1].caption);
+      console.log("post 0's caption: " + postData.data[0].caption);
       setNextURL(postData.paging.next);
       setInitMediaIsSet(true);
       setAllPosts(postData.data);
-      //setNextURL(postData.paging.next);
-      //setInitMediaIsSet(true);
     }
   };
 
+  /*get the next page of posts*/
   const getUserMedia = async () => {
-    //next page
     console.log("pinging next page with next url " + nextURL);
     const response = await fetch(nextURL);
     postData = await response.json();
-    //console.log("postData.data[1]: " + postData.data[1].caption);
-    //return postData;
-
-    /* if (allPosts.length != 0) {
-      setPrevPosts(allPosts);
-    } */
-    console.log("postData.data[1]: " + postData.data[1].caption);
+    console.log("post O's caption: " + postData.data[0].caption);
     setNextURL(postData.paging.next);
     setAllPosts(postData.data);
-    //return allPosts;
-    return postData;
   };
 
+  /*when the month & year has been selected, turn it into a format that matches the date value from Instagram's API*/
   useEffect(() => {
     if (monthSelectedBool && yearSelectedBool) {
       getMonthYearCombo();
     }
   }, [monthSelected, yearSelected]);
 
+  /*once the date has been formatted, either execute a new search or continue with the current search*/
   useEffect(() => {
-    //console.log(monthYearCombo);
     if (monthYearCombo != "") {
       if (allPosts.length == 0) {
         initUserMedia();
@@ -83,19 +72,12 @@ function App() {
     }
   }, [monthYearCombo]);
 
+  /*if allPosts has been updated (ie it got updated with the next page of posts) then try to filterbyDate again*/
   useEffect(() => {
     if (initMediaIsSet && monthYearCombo != "") {
       filterByDate();
     }
   }, [allPosts]);
-
-  const getIdUsername = async () => {
-    const response = await fetch(
-      "https://graph.instagram.com/me/?fields=id,username&access_token=IGQVJVQWx6X0tkM1BncGR1WXh6TDVCbzY2SWpFVGp4dXdUMWotWmEwalJvc29VNV9MQ1AwbmQzdGQzbGszYVZANSUpPQ3lTX0ZAIblBsT3ZAvX01ucjJQOVFFb3dqWXF4aFplbmFCdzVodkx2SEttbm44TAZDZD"
-    );
-    const data = await response.json();
-    //console.log(data);
-  };
 
   const dropdownOptions = [
     {
@@ -231,6 +213,7 @@ function App() {
     },
   ];
 
+  /*function for formatting the month and date selection to match the date value from Instagram's API*/
   const getMonthYearCombo = () => {
     let monthYearComboTemp = yearSelected.value + "-";
     switch (monthSelected.value) {
@@ -308,6 +291,7 @@ function App() {
     }
   };
 
+  /*function for filtering posts by date*/
   const filterByDate = async () => {
     setDoneFiltering(false);
     setFilteredPosts([]);
@@ -316,23 +300,19 @@ function App() {
     console.log("datesearched: " + dateSearched);
 
     let tempFilteredPosts = [];
-
+    /*search through allPosts to see if there are any posts within the selected date*/
     if (allPosts.length != 0) {
       allPosts.map((post) => {
         if (post.timestamp.substring(0, 7) === dateSearched) {
-          //console.log(post);
-          //setFilteredPosts([...filteredPosts, post]);
           tempFilteredPosts.push(post);
         }
       });
-    } /* else if (allPosts.length == 0) {
-      initUserMedia();
-      return;
-    } */
+    }
+    /*if no posts were found with the selected date, get the next page of posts to see if any posts there have a matching date*/
     if (tempFilteredPosts.length == 0) {
       getUserMedia();
     } else {
-      /*check if there are other matching posts on the next page*/
+      /*checking for 'overflow', ie check if there are more/additional matching posts on the next page */
       let lastPost = allPosts[allPosts.length - 1];
       if (lastPost.timestamp.substring(0, 7) === dateSearched) {
         getUserMedia();
