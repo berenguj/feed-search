@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
 
+export const dropdownOptions = [
+  {
+    id: 1,
+    value: "Date",
+  },
+  {
+    id: 2,
+    value: "People Tagged",
+  },
+  {
+    id: 3,
+    value: "Location",
+  },
+];
+
 const Dropdown = ({
   title,
   items = [],
