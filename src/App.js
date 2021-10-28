@@ -79,21 +79,6 @@ function App() {
     }
   }, [allPosts]);
 
-  /* const dropdownOptions = [
-    {
-      id: 1,
-      value: "Date",
-    },
-    {
-      id: 2,
-      value: "People Tagged",
-    },
-    {
-      id: 3,
-      value: "Location",
-    },
-  ]; */
-
   const handleDropdown = (selec) => {
     setSelection(selec);
     showSelection();
